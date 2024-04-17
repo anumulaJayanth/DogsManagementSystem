@@ -7,8 +7,8 @@ COPY . .
 # Run Maven to clean and package the application, skipping tests
 RUN mvn clean package -Pprod -DskipTests
 
-# Use the specified OpenJDK version for the runtime stage
-FROM openjdk:21-jdk-alpine
+# Use OpenJDK 17 for the runtime stage
+FROM adoptopenjdk/openjdk17:jdk-17.0.0_35-alpine-slim
 
 # Copy the built JAR file from the build stage into the runtime stage
 COPY --from=build /target/DogsManagementSystem-0.0.1-SNAPSHOT.jar DogsManagementSystem.jar
