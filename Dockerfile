@@ -1,23 +1,17 @@
-# Use a Maven image with the appropriate JDK version
+# Use the specified Maven image with JDK 11 for the build stage
 FROM maven:3.8.2-jdk-11 AS build
 
-# Set the working directory
-WORKDIR /app
-
-# Copy the entire project directory into the container
+# Copy the application source code into the container
 COPY . .
 
 # Run Maven to clean and package the application, skipping tests
-RUN mvn clean package -DskipTests
+RUN mvn clean package -Pprod -DskipTests
 
-# Start a new stage for the runtime image
-FROM openjdk:11-jdk-slim
+# Use the specified OpenJDK version for the runtime stage
+FROM adoptopenjdk/openjdk11:jdk-11.0.12_7-alpine-slim
 
-# Set the working directory
-WORKDIR /app
+# Copy the built JAR file from the build stage into the runtime stage
+COPY --from=build /target/DogsManagementSystem-0.0.1-SNAPSHOT.jar DogsManagementSystem.jar
 
-# Copy the built JAR file from the previous stage
-COPY --from=build /app/target/DogsManagementSystem-0.0.1-SNAPSHOT.jar DogsManagementSystem.jar
-
-# Specify the command to run on container start
+# Specify the command to run the application when the container starts
 CMD ["java", "-jar", "DogsManagementSystem.jar"]
