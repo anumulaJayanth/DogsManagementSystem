@@ -8,7 +8,7 @@ COPY . .
 RUN mvn clean package -Pprod -DskipTests
 
 # Use the specified OpenJDK version for the runtime stage
-FROM adoptopenjdk/openjdk11:jdk-11.0.12_7-alpine-slim
+FROM adoptopenjdk/openjdk21:jdk-21.0.1_12-alpine-slim
 
 # Copy the built JAR file from the build stage into the runtime stage
 COPY --from=build /target/DogsManagementSystem-0.0.1-SNAPSHOT.jar DogsManagementSystem.jar
