@@ -1,25 +1,19 @@
-# Use a newer Maven image
-FROM maven:3.8.5-jdk-11 AS build
+# Use a Maven image with the appropriate JDK version
+FROM maven:3.8.2-jdk-11 AS build
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy only the pom.xml to leverage Docker cache for dependencies
-COPY pom.xml .
-
-# Fetch dependencies
-RUN mvn dependency:go-offline -B
-
-# Copy the rest of the application source code
+# Copy the entire project directory into the container
 COPY . .
 
-# Build the application
-RUN mvn package -Pprod
+# Run Maven to clean and package the application, skipping tests
+RUN mvn clean package -DskipTests
 
 # Start a new stage for the runtime image
 FROM openjdk:11-jdk-slim
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
 # Copy the built JAR file from the previous stage
